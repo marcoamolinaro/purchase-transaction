@@ -24,5 +24,6 @@ hs_err_pid*
 replay_pid*
 
 # IDE and Maven configuration
-.idea
-.mvn
+*idea
+*mvn
+target
