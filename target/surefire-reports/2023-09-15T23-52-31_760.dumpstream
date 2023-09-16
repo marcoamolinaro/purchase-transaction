@@ -1,0 +1,5 @@
+# Created at 2023-09-15T23:52:32.045
+Boot Manifest-JAR contains absolute paths in classpath 'D:\Desenvolvedor\Marco\wex\purchase-transaction-wex\target\test-classes'
+Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
+'other' has different root
+
