@@ -1,5 +1,6 @@
 package com.wex.purchasetransaction.controller;
 
+import com.wex.purchasetransaction.dto.ExchangeResponse;
 import com.wex.purchasetransaction.dto.PurchaseRequest;
 import com.wex.purchasetransaction.dto.PurchaseResponse;
 import com.wex.purchasetransaction.service.impl.PurchaseServiceImpl;
@@ -28,5 +29,12 @@ public class PurchaseController {
     public ResponseEntity<PurchaseResponse> getPurchaseById(@PathVariable Long id) {
         PurchaseResponse purchaseResponse = purchaseService.getPurchaseById(id);
         return new ResponseEntity<>(purchaseResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/exchange")
+    public ResponseEntity<ExchangeResponse> getExchangeById(@PathVariable Long id,
+                                                            @PathVariable String countryCurrencyDesc) {
+        ExchangeResponse exchangeResponse = purchaseService.getExchangeById(id, countryCurrencyDesc);
+        return new ResponseEntity<>(exchangeResponse, HttpStatus.OK);
     }
 }

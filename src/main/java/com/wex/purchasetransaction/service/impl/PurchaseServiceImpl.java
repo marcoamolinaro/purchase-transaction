@@ -1,5 +1,6 @@
 package com.wex.purchasetransaction.service.impl;
 
+import com.wex.purchasetransaction.dto.ExchangeResponse;
 import com.wex.purchasetransaction.dto.PurchaseRequest;
 import com.wex.purchasetransaction.dto.PurchaseResponse;
 import com.wex.purchasetransaction.entity.Purchase;
@@ -53,5 +54,14 @@ public class PurchaseServiceImpl implements PurchaseService {
                 .build();
 
         return purchaserResponse;
+    }
+
+    @Override
+    public ExchangeResponse getExchangeById(Long id, String countryCurrencyDesc) {
+        // Find original transaction by id
+        // Find the exchange rate used for the specified Country-Currency
+        // Verify if the date of the rate is within the last 6 mounths
+        // Convert the original amount with the exchange rate used to calculate the country spefied amount
+        return null;
     }
 }

@@ -1,6 +1,5 @@
-package com.wex.purchasetransaction.entity;
+package com.wex.purchasetransaction.dto;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,22 +8,15 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-@Entity
-@Table(name = "purchase")
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class Purchase {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ExchangeResponse {
     private Long id;
-
-    @Column(length = 50)
     private String description;
-
     private Instant transactionDate;
-
-    private BigDecimal amount;
+    private BigDecimal originalAmount;
+    private Double exchangeRate;
+    private BigDecimal convertedAmount;
 }
