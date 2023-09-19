@@ -144,7 +144,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         String url = apiConfig.getBaseUrl() +
                 apiConfig.getEndPoint() +
                 apiConfig.getFields() +
-                "({currencyCountry})" +
+                "{currencyCountry}" +
                 apiConfig.getRecordDate() +
                 "{recordDate}" +
                 apiConfig.getSort();
