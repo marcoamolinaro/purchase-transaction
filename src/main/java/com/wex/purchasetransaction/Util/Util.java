@@ -8,6 +8,10 @@ import java.time.Period;
 public class Util {
 
     public final static int NUMBER_BETWEEN_MONTHS = 6;
+    public final static int INITIAL_JSON_CONTENT = 9;
+    public final static String FINAL_JSON_CONTENT = "]";
+    public final static String CURRENCY_COUNTRY_PARAM = "{currencyCountry}";
+    public final static String RECORD_DATE_PARAM = "{recordDate}";
     public static int calculateNumberOfMonths(String startDate, String endDate)  {
         int totalMonths = -1;
 

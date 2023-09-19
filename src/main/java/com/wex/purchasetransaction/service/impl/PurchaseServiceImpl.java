@@ -86,7 +86,6 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         String purchaseTransactionDate = purchaseResponse.getTransactionDate().toString().substring(0,10);
 
-        // Find the exchange rate used for the specified Country-Currency
         RatesExchangeResponse ratesExchangeResponse =
                 getExchangeRateByCurrencyCountryAndDate(countryCurrencyDesc,purchaseTransactionDate);
 
@@ -102,15 +101,12 @@ public class PurchaseServiceImpl implements PurchaseService {
         int numberOfMonths = Util.calculateNumberOfMonths(exchangeDate,
                 purchaseResponse.getTransactionDate().toString().substring(0,10));
 
-        log.info("Total of Months " + numberOfMonths);
-
         if (numberOfMonths > Util.NUMBER_BETWEEN_MONTHS) {
             throw new CustomException("The purchase cannot be converted to the target currency",
                     "MONTHS_BETWEEN_DATES_GREATHER_THAN_EXPECTED",
-                    500);
+                    400);
         }
 
-        // Build the exchange response
         ExchangeResponse exchangeResponse = ExchangeResponse
                 .builder()
                 .id(purchaseResponse.getId())
@@ -138,15 +134,17 @@ public class PurchaseServiceImpl implements PurchaseService {
         log.info("BaseUrl " + apiConfig.getBaseUrl());
         log.info("EndPoit " + apiConfig.getEndPoint());
         log.info("Fields " + apiConfig.getFields());
+        log.info("Currency Country " + currencyCountry);
         log.info("Record Date " + apiConfig.getRecordDate());
+        log.info("Date " + recordDate);
         log.info("Sort " + apiConfig.getSort());
 
         String url = apiConfig.getBaseUrl() +
                 apiConfig.getEndPoint() +
                 apiConfig.getFields() +
-                "{currencyCountry}" +
+                Util.CURRENCY_COUNTRY_PARAM +
                 apiConfig.getRecordDate() +
-                "{recordDate}" +
+                Util.RECORD_DATE_PARAM +
                 apiConfig.getSort();
 
         log.info("URL [" + url + "]");
@@ -160,16 +158,21 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         String result = restTemplate.getForObject(url, String.class, params);
 
-        result = result.substring(9, result.indexOf("]"));
+        result = result.substring(Util.INITIAL_JSON_CONTENT, result.indexOf(Util.FINAL_JSON_CONTENT));
 
-        log.info("result " + result);
+        log.info("result [" + result + "]");
+
+        if (result == null || result.isEmpty()) {
+            throw new CustomException("Data not found for " + currencyCountry + " and date " + recordDate,
+                    "DATA_NOT_FOUND", 404);
+        }
 
         RatesExchangeResponse ratesExchangeResponse = null;
 
         try {
             ratesExchangeResponse = new ObjectMapper().readValue(result, RatesExchangeResponse.class);
         } catch (Exception e) {
-            throw new CustomException("Erro to parse string", "PARSE_ERROR", 500);
+            throw new CustomException("Error to parse response", "PARSE_ERROR", 400);
         }
 
         log.info("Exchange Rate " + ratesExchangeResponse.getExchange_rate());
