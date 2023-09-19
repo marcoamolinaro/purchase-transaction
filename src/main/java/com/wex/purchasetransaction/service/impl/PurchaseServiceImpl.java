@@ -1,17 +1,27 @@
 package com.wex.purchasetransaction.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.wex.purchasetransaction.Util.ApiConfig;
 import com.wex.purchasetransaction.Util.Util;
 import com.wex.purchasetransaction.dto.ExchangeResponse;
 import com.wex.purchasetransaction.dto.PurchaseRequest;
 import com.wex.purchasetransaction.dto.PurchaseResponse;
+import com.wex.purchasetransaction.dto.RatesExchangeResponse;
 import com.wex.purchasetransaction.entity.Purchase;
 import com.wex.purchasetransaction.exception.CustomException;
 import com.wex.purchasetransaction.repository.PurchaseRepository;
 import com.wex.purchasetransaction.service.PurchaseService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -19,6 +29,8 @@ import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @Log4j2
@@ -26,6 +38,9 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Autowired
     private PurchaseRepository purchaseRepository;
+
+    @Autowired
+    private ApiConfig apiConfig;
     @Transactional
     @Override
     public long placePurchase(PurchaseRequest purchaserRequest) {
@@ -69,21 +84,22 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         log.info("Purchase [" + purchaseResponse + "] + countryCurrencyDesc [" + countryCurrencyDesc + "]");
 
-        Double exchangeRate = 4.585;
+        String purchaseTransactionDate = purchaseResponse.getTransactionDate().toString().substring(0,10);
+
+        // Find the exchange rate used for the specified Country-Currency
+        RatesExchangeResponse ratesExchangeResponse =
+                getExchangeRateByCurrencyCountryAndDate(countryCurrencyDesc,purchaseTransactionDate);
+
+        Double exchangeRate = Double.parseDouble(ratesExchangeResponse.getExchange_rate());
 
         BigDecimal convertedAmount =
                 calculateExchange(exchangeRate, purchaseResponse.getAmount());
 
-        // Find the exchange rate used for the specified Country-Currency
-
-        // Verify if the date of the rate is within the last 6 mounths
-        String exchangeDate = "2023-01-30";
+        String exchangeDate = ratesExchangeResponse.getRecord_date();
 
         log.info("exchangeDate " + exchangeDate);
 
-        int numberOfMonths = -1;
-
-        numberOfMonths = Util.calculateNumberOfMonths(exchangeDate,
+        int numberOfMonths = Util.calculateNumberOfMonths(exchangeDate,
                 purchaseResponse.getTransactionDate().toString().substring(0,10));
 
         log.info("Total of Months " + numberOfMonths);
@@ -115,5 +131,50 @@ public class PurchaseServiceImpl implements PurchaseService {
                 BigDecimal.valueOf(exchangeRate*originalAmount.doubleValue())
                         .setScale(2, RoundingMode.HALF_UP);
         return convertedAmount;
+    }
+
+    private RatesExchangeResponse getExchangeRateByCurrencyCountryAndDate(String currencyCountry, String recordDate) {
+
+        log.info("BaseUrl " + apiConfig.getBaseUrl());
+        log.info("EndPoit " + apiConfig.getEndPoint());
+        log.info("Fields " + apiConfig.getFields());
+        log.info("Record Date " + apiConfig.getRecordDate());
+        log.info("Sort " + apiConfig.getSort());
+
+        String url = apiConfig.getBaseUrl() +
+                apiConfig.getEndPoint() +
+                apiConfig.getFields() +
+                "({currencyCountry})" +
+                apiConfig.getRecordDate() +
+                "{recordDate}" +
+                apiConfig.getSort();
+
+        log.info("URL [" + url + "]");
+
+        Map<String, String> params = new HashMap<String, String>();
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        params.put("currencyCountry", currencyCountry);
+        params.put("recordDate", recordDate);
+
+        String result = restTemplate.getForObject(url, String.class, params);
+
+        result = result.substring(9, result.indexOf("]"));
+
+        log.info("result " + result);
+
+        RatesExchangeResponse ratesExchangeResponse = null;
+
+        try {
+            ratesExchangeResponse = new ObjectMapper().readValue(result, RatesExchangeResponse.class);
+        } catch (Exception e) {
+            throw new CustomException("Erro to parse string", "PARSE_ERROR", 500);
+        }
+
+        log.info("Exchange Rate " + ratesExchangeResponse.getExchange_rate());
+        log.info("Exchange Date " + ratesExchangeResponse.getRecord_date());
+
+        return ratesExchangeResponse;
     }
 }
