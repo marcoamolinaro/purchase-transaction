@@ -9,5 +9,5 @@ public interface PurchaseService {
 
     PurchaseResponse getPurchaseById(Long id);
 
-    ExchangeResponse getExchangeById(Long id, String countryCurrencyDesc);
+    ExchangeResponse getExchangeById(Long id, String countryCurrencyDesc) throws Exception;
 }

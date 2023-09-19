@@ -31,7 +31,7 @@ public class PurchaseController {
         return new ResponseEntity<>(purchaseResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/exchange")
+    @GetMapping("/exchange/{id}/{countryCurrencyDesc}")
     public ResponseEntity<ExchangeResponse> getExchangeById(@PathVariable Long id,
                                                             @PathVariable String countryCurrencyDesc) {
         ExchangeResponse exchangeResponse = purchaseService.getExchangeById(id, countryCurrencyDesc);
