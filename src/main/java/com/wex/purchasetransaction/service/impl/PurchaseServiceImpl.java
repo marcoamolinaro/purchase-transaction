@@ -91,7 +91,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         if (numberOfMonths > Util.NUMBER_BETWEEN_MONTHS) {
             throw new CustomException("The purchase cannot be converted to the target currency",
                     "MONTHS_BETWEEN_DATES_GREATHER_THAN_EXPECTED",
-                    -1);
+                    500);
         }
 
         // Build the exchange response
