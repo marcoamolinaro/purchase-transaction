@@ -3,6 +3,7 @@ package com.wex.purchasetransaction.controller;
 import com.wex.purchasetransaction.dto.ExchangeResponse;
 import com.wex.purchasetransaction.dto.PurchaseRequest;
 import com.wex.purchasetransaction.dto.PurchaseResponse;
+import com.wex.purchasetransaction.entity.Purchase;
 import com.wex.purchasetransaction.service.impl.PurchaseServiceImpl;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +20,10 @@ public class PurchaseController {
     private PurchaseServiceImpl purchaseService;
 
     @PostMapping("/placePurchase")
-    public ResponseEntity<Long> placePurchase(@RequestBody PurchaseRequest purchaseRequest) {
-        long id = purchaseService.placePurchase(purchaseRequest);
-        log.info("Purchase Id: {}", id);
-        return new ResponseEntity<>(id, HttpStatus.CREATED);
+    public ResponseEntity<Purchase> placePurchase(@RequestBody PurchaseRequest purchaseRequest) {
+        Purchase purchase = purchaseService.placePurchase(purchaseRequest);
+        log.info("Purchase Id: {}", purchase.getId());
+        return new ResponseEntity<>(purchase, HttpStatus.CREATED);
     }
 
     @GetMapping("{id}")

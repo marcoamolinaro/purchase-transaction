@@ -43,7 +43,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     private ApiConfig apiConfig;
     @Transactional
     @Override
-    public long placePurchase(PurchaseRequest purchaserRequest) {
+    public Purchase placePurchase(PurchaseRequest purchaserRequest) {
         log.info("Place a Purchase transaction");
 
         Purchase purchase = Purchase
@@ -55,7 +55,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         purchaseRepository.save(purchase);
 
-        return purchase.getId();
+        return purchase;
     }
 
     @Transactional(readOnly = true)
