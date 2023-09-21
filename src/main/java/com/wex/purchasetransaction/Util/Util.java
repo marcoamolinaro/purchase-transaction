@@ -2,6 +2,8 @@ package com.wex.purchasetransaction.Util;
 
 import com.wex.purchasetransaction.exception.CustomException;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.Period;
 
@@ -28,5 +30,12 @@ public class Util {
         }
 
         return totalMonths;
+    }
+
+    public static BigDecimal calculateExchange(Double exchangeRate, BigDecimal originalAmount) {
+        BigDecimal convertedAmount =
+                BigDecimal.valueOf(exchangeRate*originalAmount.doubleValue())
+                        .setScale(2, RoundingMode.HALF_UP);
+        return convertedAmount;
     }
 }

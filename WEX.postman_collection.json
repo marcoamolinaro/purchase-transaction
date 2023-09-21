@@ -1,0 +1,54 @@
+{
+	"info": {
+		"_postman_id": "f9f553e4-54ed-4cb1-a5c3-783b76aad187",
+		"name": "WEX",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "7418351"
+	},
+	"item": [
+		{
+			"name": "Post place a purchase",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"description\": \"Transaction 21-09 1\",\r\n    \"transactionDate\": \"2023-09-21T05:52:14Z\",\r\n    \"amount\": 300.98\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/purchase/placePurchase"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Purchase By Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8080/purchase/9"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Purchase By Id and Currency",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8080/purchase/exchange/5/Brazil-Real"
+			},
+			"response": []
+		},
+		{
+			"name": "api",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
