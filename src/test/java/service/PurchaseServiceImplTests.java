@@ -28,8 +28,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @Log4j2
@@ -133,6 +132,55 @@ public class PurchaseServiceImplTests {
 
         assertEquals(new BigDecimal("973.93"), exchangeResponse.getConvertedAmount());
      }
+
+    @DisplayName("Get Exchance - Fail test - currency conversion rate is not available within 6 months")
+    @Test
+    void testGetExchangeFailCurrencyRateMoreThanSixMonths() {
+        String countryCurrencyDesc = "Brazil-Real";
+
+        log.info("Purchase [" + purchaseResponse + "] + countryCurrencyDesc [" + countryCurrencyDesc + "]");
+
+        String purchaseTransactionDate = "2024-05-01";
+
+        ratesExchangeResponse =
+                getExchangeRateByCurrencyCountryAndDate(countryCurrencyDesc,purchaseTransactionDate);
+
+        Double exchangeRate = Double.parseDouble(ratesExchangeResponse.getExchange_rate());
+
+        BigDecimal convertedAmount =
+                Util.calculateExchange(exchangeRate, purchaseResponse.getAmount());
+
+        String exchangeDate = ratesExchangeResponse.getRecord_date();
+
+        log.info("exchangeDate " + exchangeDate);
+
+        int numberOfMonths = Util.calculateNumberOfMonths(exchangeDate,
+                purchaseTransactionDate);
+
+        log.info("numberOfMonths " + numberOfMonths);
+
+        assertTrue(numberOfMonths > 6);
+
+    }
+
+    @DisplayName("Get Exchance - Fail test - Country-Currency not found")
+    @Test
+    void testGetExchangeFail() {
+        String countryCurrencyDesc = "Brazil-Peso";
+
+        log.info("Purchase [" + purchaseResponse + "] + countryCurrencyDesc [" + countryCurrencyDesc + "]");
+
+        String purchaseTransactionDate = purchaseResponse.getTransactionDate().toString().substring(0,10);
+
+        try {
+            ratesExchangeResponse =
+                    getExchangeRateByCurrencyCountryAndDate(countryCurrencyDesc, purchaseTransactionDate);
+        } catch (CustomException ce) {
+            log.info(ce.getMessage());
+        }
+
+        assertNull(ratesExchangeResponse);
+    }
 
     private RatesExchangeResponse getExchangeRateByCurrencyCountryAndDate(String currencyCountry, String recordDate) {
 
