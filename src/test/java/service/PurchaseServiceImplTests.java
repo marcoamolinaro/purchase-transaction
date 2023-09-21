@@ -63,5 +63,6 @@ public class PurchaseServiceImplTests {
         verify(purchaseRepository, times(1)).save(purchaseSaved);
 
         assertNotNull(purchaseSaved);
+        assertEquals("Transaction test 1", purchaseSaved.getDescription());
     }
 }
