@@ -2,7 +2,6 @@ package service;
 
 
 import com.wex.purchasetransaction.dto.PurchaseRequest;
-import com.wex.purchasetransaction.dto.PurchaseResponse;
 import com.wex.purchasetransaction.entity.Purchase;
 import com.wex.purchasetransaction.repository.PurchaseRepository;
 import com.wex.purchasetransaction.service.PurchaseService;
@@ -35,20 +34,10 @@ public class PurchaseServiceImplTests {
 
     private PurchaseRequest purchaseRequest;
 
-    private Purchase purchase;
-
     @BeforeEach
     public void setup() {
         purchaseRequest = PurchaseRequest
                 .builder()
-                .description("Transaction test 1")
-                .transactionDate(Instant.now())
-                .amount(new BigDecimal("200.48"))
-                .build();
-
-        purchase = Purchase
-                .builder()
-                .id(1L)
                 .description("Transaction test 1")
                 .transactionDate(Instant.now())
                 .amount(new BigDecimal("200.48"))
