@@ -92,7 +92,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         Double exchangeRate = Double.parseDouble(ratesExchangeResponse.getExchange_rate());
 
         BigDecimal convertedAmount =
-                calculateExchange(exchangeRate, purchaseResponse.getAmount());
+                Util.calculateExchange(exchangeRate, purchaseResponse.getAmount());
 
         String exchangeDate = ratesExchangeResponse.getRecord_date();
 
@@ -103,7 +103,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         if (numberOfMonths > Util.NUMBER_BETWEEN_MONTHS) {
             throw new CustomException("The purchase cannot be converted to the target currency",
-                    "MONTHS_BETWEEN_DATES_GREATHER_THAN_EXPECTED",
+                    "MONTHS_BETWEEN_DATES_GREATER_THAN_EXPECTED",
                     400);
         }
 
@@ -120,13 +120,6 @@ public class PurchaseServiceImpl implements PurchaseService {
         log.info("Exchange [" + exchangeResponse + "]");
 
         return exchangeResponse;
-    }
-
-    private BigDecimal calculateExchange(Double exchangeRate, BigDecimal originalAmount) {
-        BigDecimal convertedAmount =
-                BigDecimal.valueOf(exchangeRate*originalAmount.doubleValue())
-                        .setScale(2, RoundingMode.HALF_UP);
-        return convertedAmount;
     }
 
     private RatesExchangeResponse getExchangeRateByCurrencyCountryAndDate(String currencyCountry, String recordDate) {
