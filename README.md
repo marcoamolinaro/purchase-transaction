@@ -14,4 +14,4 @@ You can also build the application with the following commands inside the root d
 # How to execute
 You can use a tool like Postman to execute the url to test the apis.
 Inside the root directory you can import the file WEX.postman_collection.json that contains 3 request examples, one to save a transaction, other to get the transaction by Id
-and another to get the exchange informations based on Currency-Country specific.
+and another to get the exchange information based on Currency-Country specific.
